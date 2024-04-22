@@ -17,7 +17,7 @@ public class User {
         User model = new User();
         model.setId(entity.getId());
         model.setUsername(entity.getUsername());
-        model.setIsOnline(entity.getOnline());
+        model.setIsOnline(entity.getIsOnline());
         return model;
     }
 
