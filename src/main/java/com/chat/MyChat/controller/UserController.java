@@ -34,4 +34,14 @@ public class UserController {
             return ResponseEntity.badRequest().body("There are something wrong....");
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody UserEntity user) {
+        try {
+            System.out.println(user.getUsername() + " " + user.getPassword());
+            return ResponseEntity.ok("User signed in");
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body("There are something wrong....");
+        }
+    }
 }
