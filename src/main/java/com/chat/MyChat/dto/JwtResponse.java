@@ -1,0 +1,10 @@
+package com.chat.MyChat.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class JwtResponse {
+    private String token;
+}
