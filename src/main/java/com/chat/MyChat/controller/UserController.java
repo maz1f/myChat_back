@@ -1,11 +1,14 @@
 package com.chat.MyChat.controller;
 
 import com.chat.MyChat.dto.AppError;
-import com.chat.MyChat.dto.JwtRequest;
+import com.chat.MyChat.dto.LoginRequest;
 import com.chat.MyChat.dto.JwtResponse;
+import com.chat.MyChat.dto.RefreshTokenRequest;
 import com.chat.MyChat.entity.UserEntity;
+import com.chat.MyChat.exception.InvalidRefreshToken;
 import com.chat.MyChat.exception.UserAlreadyExistException;
 import com.chat.MyChat.model.User;
+import com.chat.MyChat.service.RefreshTokenService;
 import com.chat.MyChat.service.UserService;
 import com.chat.MyChat.util.JwtTokenUtils;
 import lombok.AllArgsConstructor;
@@ -23,12 +26,10 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class UserController {
-
     private final UserService userService;
-
     private final JwtTokenUtils jwtTokenUtils;
-
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     @GetMapping
     public List<User> getUsers(){
@@ -38,7 +39,6 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserEntity user) {
         try {
-            System.out.println(user);
             userService.registration(user);
             return ResponseEntity.ok("User registered");
         } catch (UserAlreadyExistException e) {
@@ -50,14 +50,26 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody JwtRequest authRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest authRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Uncorrect login or password"), HttpStatus.UNAUTHORIZED);
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
-        String token = jwtTokenUtils.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(
+                JwtResponse.builder()
+                        .token(jwtTokenUtils.generateToken(userDetails))
+                        .refreshToken(refreshTokenService.generateRefreshToken(userDetails.getUsername()))
+                        .build()
+        );
+    }
+
+    @PostMapping("/refreshToken")
+    public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) throws InvalidRefreshToken {
+        return JwtResponse.builder()
+                .token(refreshTokenService.refreshToken(refreshTokenRequest.getToken()))
+                .refreshToken(refreshTokenRequest.getToken())
+                .build();
     }
 }

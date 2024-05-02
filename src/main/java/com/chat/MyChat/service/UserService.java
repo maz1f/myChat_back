@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +30,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserEntity registration(UserEntity user) throws UserAlreadyExistException {
-        if (userRepo.findByUsername(user.getUsername()) != null)
+        if (userRepo.findByUsername(user.getUsername()).isPresent())
             throw new UserAlreadyExistException("User already exist!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setIsOnline(false);
@@ -39,11 +40,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepo.findByUsername(username);
-        if (user == null) {
+        Optional<UserEntity> user = userRepo.findByUsername(username);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(user.get());
     }
 
 }

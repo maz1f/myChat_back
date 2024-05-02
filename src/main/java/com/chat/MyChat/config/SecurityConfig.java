@@ -25,12 +25,12 @@ public class SecurityConfig {
     @Autowired
     private UserService userService;
     @Autowired
-    private JitRequestFilter jwtRequestFilter;
+    private JwtRequestFilter jwtRequestFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login").permitAll().requestMatchers("/test").authenticated())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login", "/refreshToken").permitAll().requestMatchers("/test").authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
