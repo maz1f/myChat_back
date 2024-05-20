@@ -36,6 +36,12 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/getName")
+    public String index(@RequestHeader("Authorization") String token){
+        System.out.println(token.substring(7));
+        return jwtTokenUtils.getUsernameByToken(token.substring(7));
+    }
+
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserEntity user) {
         try {

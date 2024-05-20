@@ -55,4 +55,9 @@ public class JwtTokenUtils {
                 .getBody();
     }
 
+    public String getUsernameByToken(String token){
+        Claims claims = getClaimsFromToken(token);
+        return claims.getSubject();
+    }
+
 }

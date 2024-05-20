@@ -11,6 +11,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -78,7 +79,6 @@ public class RefreshTokenService {
         Optional<RefreshTokenEntity> refreshToken = findByToken(token);
         if (refreshToken.isEmpty() || !validateRefreshToken(refreshToken.get().getToken()))
             throw new InvalidRefreshToken("Invalid refresh token!");
-
         return jwtTokenUtils.generateToken(
                 userService.loadUserByUsername(
                         refreshToken.get().getUser().getUsername()

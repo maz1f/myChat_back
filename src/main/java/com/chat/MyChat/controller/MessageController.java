@@ -12,4 +12,5 @@ public class MessageController {
     public String test() {
         return "You are logged in";
     }
+
 }
