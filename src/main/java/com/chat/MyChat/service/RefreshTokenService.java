@@ -85,4 +85,10 @@ public class RefreshTokenService {
                 )
         );
     }
+
+    public boolean deleteRefreshToken(String token) {
+        Optional<RefreshTokenEntity> refreshToken = findByToken(token);
+        refreshToken.ifPresent(refreshTokenEntity -> refreshTokenRepo.delete(refreshTokenEntity));
+        return true;
+    }
 }

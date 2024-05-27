@@ -78,4 +78,12 @@ public class UserController {
                 .refreshToken(refreshTokenRequest.getToken())
                 .build();
     }
+
+    @PostMapping("/customLogout")
+    public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        System.out.println(refreshTokenRequest.getToken());
+        refreshTokenService.deleteRefreshToken(refreshTokenRequest.getToken());
+        return ResponseEntity.ok("ok");
+    }
+
 }
