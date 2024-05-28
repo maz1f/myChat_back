@@ -29,6 +29,14 @@ public class UserService implements UserDetailsService {
         return userRepo.findAll().stream().map(User::toModel).collect(Collectors.toList());
     }
 
+    public boolean isUserExist(String username){
+        return userRepo.findByUsername(username).isPresent();
+    }
+
+    public List<String> getAllUsernames(){
+        return userRepo.findAll().stream().map(UserEntity::getUsername).collect(Collectors.toList());
+    }
+
     public UserEntity registration(UserEntity user) throws UserAlreadyExistException {
         if (userRepo.findByUsername(user.getUsername()).isPresent())
             throw new UserAlreadyExistException("User already exist!");

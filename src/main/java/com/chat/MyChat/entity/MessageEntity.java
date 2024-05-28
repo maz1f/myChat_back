@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -25,5 +27,8 @@ public class MessageEntity {
     @ManyToOne
     @JoinColumn(name = "recipient_id")
     private UserEntity recipient;
+
+    @Setter
+    private Date sentDate;
 
 }
