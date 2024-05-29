@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -43,16 +41,6 @@ public class ChatService {
 
     }
 
-    public void sendMessage(MessageRequest message) throws ChatNotFoundException {
-        if (!isChatExist(message.getSender(), message.getRecipient()))
-            throw new ChatNotFoundException();
 
-        MessageEntity messageEntity = new MessageEntity();
-        messageEntity.setMessage(message.getMessage());
-        messageEntity.setSender(userRepo.findByUsername(message.getSender()).get());
-        messageEntity.setRecipient(userRepo.findByUsername(message.getRecipient()).get());
-        messageEntity.setSentDate(new Date());
-        messageRepo.save(messageEntity);
-    }
 
 }

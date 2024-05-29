@@ -35,13 +35,4 @@ public class ChatController {
                 .build();
     }
 
-    @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestBody MessageRequest message){
-        try {
-            chatService.sendMessage(message);
-        } catch (ChatNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        return ResponseEntity.ok("Message sent");
-    }
 }
