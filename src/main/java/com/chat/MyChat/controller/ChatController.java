@@ -30,8 +30,7 @@ public class ChatController {
     @GetMapping("/{sender}/{recipient}")
     public MessagesResponse getChat(@PathVariable String sender, @PathVariable String recipient) throws ChatNotFoundException {
         return MessagesResponse.builder()
-                .sentMessages(chatService.getMessages(sender, recipient))
-                .receivedMessages(chatService.getMessages(recipient, sender))
+                .messages(chatService.getMessages(sender, recipient))
                 .build();
     }
 

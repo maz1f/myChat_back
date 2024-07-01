@@ -11,6 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MessagesResponse {
-    private List<Message> sentMessages;
-    private List<Message> receivedMessages;
+    private List<Message> messages;
 }

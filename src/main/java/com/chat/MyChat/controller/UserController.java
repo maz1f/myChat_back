@@ -73,8 +73,10 @@ public class UserController {
 
     @PostMapping("/refreshToken")
     public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) throws InvalidRefreshToken {
+        String token = refreshTokenService.refreshToken(refreshTokenRequest.getToken());
+        System.out.println(token);
         return JwtResponse.builder()
-                .token(refreshTokenService.refreshToken(refreshTokenRequest.getToken()))
+                .token(token)
                 .refreshToken(refreshTokenRequest.getToken())
                 .build();
     }

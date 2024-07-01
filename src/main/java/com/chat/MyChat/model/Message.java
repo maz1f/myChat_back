@@ -14,14 +14,16 @@ public class Message {
     private String message;
     private String sender;
     private String recipient;
-    private Date sentDate;
+    private String sentDate;
+    private String type;
 
-    public static Message toModel(MessageEntity messageEntity) {
+    public static Message toModel(MessageEntity messageEntity, String type) {
         Message message = new Message();
         message.setMessage(messageEntity.getMessage());
         message.setSender(messageEntity.getSender().getUsername());
         message.setRecipient(messageEntity.getRecipient().getUsername());
-        message.setSentDate(messageEntity.getSentDate());
+        message.setSentDate(messageEntity.getSentDate().toString());
+        message.setType(type);
         return message;
     }
 

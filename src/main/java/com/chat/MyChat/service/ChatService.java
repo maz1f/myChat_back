@@ -12,8 +12,10 @@ import com.chat.MyChat.util.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class ChatService {
@@ -34,10 +36,10 @@ public class ChatService {
     public List<Message> getMessages(String sender, String recipient) throws ChatNotFoundException {
         if (!isChatExist(sender, recipient))
             throw new ChatNotFoundException();
-        return messageRepo.getAllBySenderUsernameAndRecipientUsername(sender, recipient)
-                .stream()
-                .map(Message::toModel)
-                .toList();
+        return Stream.concat(
+                messageRepo.getAllBySenderUsernameAndRecipientUsername(sender, recipient).stream().map(msg -> Message.toModel(msg, "sent")),
+                messageRepo.getAllBySenderUsernameAndRecipientUsername(recipient, sender).stream().map(msg -> Message.toModel(msg, "received"))
+        ).sorted(Comparator.comparing(Message::getSentDate)).toList();
 
     }
 
