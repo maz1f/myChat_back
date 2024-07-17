@@ -1,17 +1,15 @@
 package com.chat.MyChat.controller;
 
 import com.chat.MyChat.dto.AllChatsResponse;
-import com.chat.MyChat.dto.MessageRequest;
 import com.chat.MyChat.dto.MessagesResponse;
 import com.chat.MyChat.exception.ChatNotFoundException;
 import com.chat.MyChat.service.ChatService;
 import com.chat.MyChat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.context.SecurityContextHolder;
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class ChatController {
 
     @Autowired
@@ -27,7 +25,7 @@ public class ChatController {
                 .build();
     }
 
-    @GetMapping("/{sender}/{recipient}")
+    @GetMapping("/chat/{sender}/{recipient}")
     public MessagesResponse getChat(@PathVariable String sender, @PathVariable String recipient) throws ChatNotFoundException {
         return MessagesResponse.builder()
                 .messages(chatService.getMessages(sender, recipient))

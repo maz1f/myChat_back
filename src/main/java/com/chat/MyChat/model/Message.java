@@ -11,6 +11,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class Message {
+    private Long id;
     private String message;
     private String sender;
     private String recipient;
@@ -19,6 +20,7 @@ public class Message {
 
     public static Message toModel(MessageEntity messageEntity, String type) {
         Message message = new Message();
+        message.id = messageEntity.getId();
         message.setMessage(messageEntity.getMessage());
         message.setSender(messageEntity.getSender().getUsername());
         message.setRecipient(messageEntity.getRecipient().getUsername());

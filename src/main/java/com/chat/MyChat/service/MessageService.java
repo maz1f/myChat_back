@@ -32,4 +32,5 @@ public class MessageService {
         messageEntity.setSentDate(new Date());
         messageRepo.save(messageEntity);
     }
+
 }

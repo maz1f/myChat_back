@@ -9,15 +9,16 @@ import com.chat.MyChat.model.Message;
 import com.chat.MyChat.repo.MessageRepo;
 import com.chat.MyChat.repo.UserRepo;
 import com.chat.MyChat.util.JwtTokenUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class ChatService {
 
     @Autowired
@@ -36,6 +37,12 @@ public class ChatService {
     public List<Message> getMessages(String sender, String recipient) throws ChatNotFoundException {
         if (!isChatExist(sender, recipient))
             throw new ChatNotFoundException();
+        if (sender.equals(recipient)) {
+            return messageRepo.getAllBySenderUsernameAndRecipientUsername(sender, recipient)
+                    .stream()
+                    .map(msg -> Message.toModel(msg, "received"))
+                    .sorted(Comparator.comparing(Message::getSentDate)).toList();
+        }
         return Stream.concat(
                 messageRepo.getAllBySenderUsernameAndRecipientUsername(sender, recipient).stream().map(msg -> Message.toModel(msg, "sent")),
                 messageRepo.getAllBySenderUsernameAndRecipientUsername(recipient, sender).stream().map(msg -> Message.toModel(msg, "received"))

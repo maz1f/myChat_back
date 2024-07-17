@@ -1,4 +1,4 @@
-package com.chat.MyChat.dto;
+package com.chat.MyChat.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MessageRequest {
-    private String message;
-    private String sender;
-    private String recipient;
+public class ChatNotification {
+    private String senderName;
 }
