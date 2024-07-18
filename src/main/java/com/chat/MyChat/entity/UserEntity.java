@@ -2,12 +2,11 @@ package com.chat.MyChat.entity;
 
 import com.chat.MyChat.model.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -43,12 +42,20 @@ public class UserEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipient")
     private List<MessageEntity> receivedMessages;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private List<NotificationEntity> notifications;
+
     public void addSetMessage(MessageEntity message) {
         this.sentMessage.add(message);
     }
 
     public void addReceivedMessage(MessageEntity message) {
         this.receivedMessages.add(message);
+    }
+
+    public void addNotification(NotificationEntity notification) {
+        this.notifications.add(notification);
     }
 
 }

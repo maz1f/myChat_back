@@ -3,6 +3,7 @@ package com.chat.MyChat.service;
 import com.chat.MyChat.entity.UserEntity;
 import com.chat.MyChat.exception.UserAlreadyExistException;
 import com.chat.MyChat.model.CustomUserDetails;
+import com.chat.MyChat.model.Notification;
 import com.chat.MyChat.model.Role;
 import com.chat.MyChat.model.User;
 import com.chat.MyChat.repo.UserRepo;
@@ -57,6 +58,14 @@ public class UserService implements UserDetailsService {
 
     public Optional<UserEntity> findByUsername(String username){
         return userRepo.findByUsername(username);
+    }
+
+    public List<Notification> getAllNotifications(String username) throws UsernameNotFoundException {
+        Optional<UserEntity> user = findByUsername(username);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException(username);
+        }
+        return user.get().getNotifications().stream().map(Notification::toModel).collect(Collectors.toList());
     }
 
 }

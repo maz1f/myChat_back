@@ -2,11 +2,13 @@ package com.chat.MyChat.service;
 
 import com.chat.MyChat.dto.MessageRequest;
 import com.chat.MyChat.entity.MessageEntity;
+import com.chat.MyChat.entity.NotificationEntity;
 import com.chat.MyChat.entity.UserEntity;
 import com.chat.MyChat.exception.ChatNotFoundException;
-import com.chat.MyChat.model.User;
 import com.chat.MyChat.repo.MessageRepo;
+import com.chat.MyChat.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -19,6 +21,8 @@ public class MessageService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepo userRepo;
 
     public void sendMessage(MessageRequest message) throws ChatNotFoundException {
         Optional<UserEntity> sender = userService.findByUsername(message.getSender());
@@ -31,6 +35,16 @@ public class MessageService {
         messageEntity.setRecipient(recipient.get());
         messageEntity.setSentDate(new Date());
         messageRepo.save(messageEntity);
+    }
+
+    public void addNotification(String username, String notification) {
+        Optional<UserEntity> user = userService.findByUsername(username);
+        if (user.isEmpty())
+            throw new UsernameNotFoundException(username);
+        NotificationEntity notificationEntity = new NotificationEntity();
+        notificationEntity.setNotification(notification);
+        user.get().addNotification(notificationEntity);
+        userRepo.save(user.get());
     }
 
 }
