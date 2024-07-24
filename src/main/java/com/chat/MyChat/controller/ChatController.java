@@ -5,6 +5,7 @@ import com.chat.MyChat.dto.MessagesResponse;
 import com.chat.MyChat.exception.ChatNotFoundException;
 import com.chat.MyChat.service.ChatService;
 import com.chat.MyChat.service.UserService;
+import com.chat.MyChat.util.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 @RestController
@@ -14,12 +15,15 @@ public class ChatController {
     private UserService userService;
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
 
     @GetMapping("/getChats")
-    public AllChatsResponse getAllChats() {
+    public AllChatsResponse getAllChats(@RequestHeader("Authorization") String token) {
+        String username = jwtTokenUtils.getUsernameByToken(token.substring(7));
         return AllChatsResponse.builder()
-                .users(userService.getAllUsernames())
+                .chats(chatService.chatsWithNewMessages(username))
                 .build();
     }
 

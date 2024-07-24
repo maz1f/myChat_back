@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,10 +24,6 @@ public class MessageController {
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
     private ChatService chatService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private JwtTokenUtils jwtTokenUtils;
 
     @MessageMapping("/send")
     public void sendMessage(MessageRequest message) throws ChatNotFoundException {
@@ -41,14 +36,6 @@ public class MessageController {
                         .messages(chatService.getMessages(message.getRecipient(), message.getSender()))
                         .build()
         );
-        messageService.addNotification(message.getRecipient(), "You have received a new message from " + message.getSender());
-        messagingTemplate.convertAndSendToUser(
-                message.getRecipient(),
-                "/messages",
-                NotificationResponse.builder()
-                        .notifications(userService.getAllNotifications(message.getRecipient()))
-                        .build()
-        );
         if (!message.getSender().equals(message.getRecipient())) {
             messagingTemplate.convertAndSendToUser(
                     message.getSender(),
@@ -57,16 +44,15 @@ public class MessageController {
                             .messages(chatService.getMessages(message.getSender(), message.getRecipient()))
                             .build()
             );
+            messagingTemplate.convertAndSendToUser(
+                    message.getRecipient(),
+                    "/messages",
+                    NotificationResponse.builder()
+                            .notification("You have received a new message from " + message.getSender())
+                            .sender(message.getSender())
+                            .build()
+            );
         }
-
-    }
-
-    @GetMapping("/getNotifications")
-    public NotificationResponse getNotifications(@RequestHeader("Authorization") String token) throws UsernameNotFoundException {
-        String username = jwtTokenUtils.getUsernameByToken(token.substring(7));
-        return NotificationResponse.builder()
-                .notifications(userService.getAllNotifications(username))
-                .build();
     }
 
 }

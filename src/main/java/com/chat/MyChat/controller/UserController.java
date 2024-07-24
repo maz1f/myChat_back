@@ -38,7 +38,6 @@ public class UserController {
 
     @GetMapping("/getName")
     public String index(@RequestHeader("Authorization") String token){
-        System.out.println(token.substring(7));
         return jwtTokenUtils.getUsernameByToken(token.substring(7));
     }
 
@@ -83,11 +82,16 @@ public class UserController {
 
     @PostMapping("/customLogout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        System.out.println(refreshTokenRequest.getToken());
         refreshTokenService.deleteRefreshToken(refreshTokenRequest.getToken());
         return ResponseEntity.ok("ok");
     }
 
+    @GetMapping("/readLastNotification")
+    public ResponseEntity<?> readLastNotification(@RequestHeader("Authorization") String token) {
+        String username = jwtTokenUtils.getUsernameByToken(token.substring(7));
+        userService.refreshNewNotifications(username);
+        return ResponseEntity.ok("ok");
+    }
 
 
 }

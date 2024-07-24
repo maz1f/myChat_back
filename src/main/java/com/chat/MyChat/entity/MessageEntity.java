@@ -31,4 +31,7 @@ public class MessageEntity {
     @Setter
     private Date sentDate;
 
+    @Setter
+    private Boolean isRead = false;
+
 }

@@ -2,17 +2,17 @@ package com.chat.MyChat.service;
 
 import com.chat.MyChat.dto.MessageRequest;
 import com.chat.MyChat.entity.MessageEntity;
-import com.chat.MyChat.entity.NotificationEntity;
 import com.chat.MyChat.entity.UserEntity;
 import com.chat.MyChat.exception.ChatNotFoundException;
+import com.chat.MyChat.model.Chat;
 import com.chat.MyChat.repo.MessageRepo;
 import com.chat.MyChat.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -37,14 +37,13 @@ public class MessageService {
         messageRepo.save(messageEntity);
     }
 
-    public void addNotification(String username, String notification) {
-        Optional<UserEntity> user = userService.findByUsername(username);
-        if (user.isEmpty())
-            throw new UsernameNotFoundException(username);
-        NotificationEntity notificationEntity = new NotificationEntity();
-        notificationEntity.setNotification(notification);
-        user.get().addNotification(notificationEntity);
-        userRepo.save(user.get());
+    public int countNewMessagesFromUser(String sender, String recipient) throws ChatNotFoundException {
+        Optional<UserEntity> senderUser = userService.findByUsername(sender);
+        Optional<UserEntity> recipientUser = userService.findByUsername(recipient);
+        if (senderUser.isEmpty() || recipientUser.isEmpty())
+            throw new ChatNotFoundException();
+        return messageRepo.countAllBySenderUsernameAndRecipientUsernameAndIsReadFalse(senderUser.get().getUsername(), recipientUser.get().getUsername());
     }
+
 
 }
