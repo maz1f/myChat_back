@@ -11,7 +11,12 @@ import com.chat.MyChat.model.User;
 import com.chat.MyChat.service.RefreshTokenService;
 import com.chat.MyChat.service.UserService;
 import com.chat.MyChat.util.JwtTokenUtils;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.AllArgsConstructor;
+import org.hibernate.engine.spi.PersistenceContext;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +25,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -30,6 +36,8 @@ public class UserController {
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+    private final ApplicationContext applicationContext;
+    private final EntityManager entityManager;
 
     @GetMapping
     public List<User> getUsers(){
@@ -73,7 +81,6 @@ public class UserController {
     @PostMapping("/refreshToken")
     public JwtResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) throws InvalidRefreshToken {
         String token = refreshTokenService.refreshToken(refreshTokenRequest.getToken());
-        System.out.println(token);
         return JwtResponse.builder()
                 .token(token)
                 .refreshToken(refreshTokenRequest.getToken())
